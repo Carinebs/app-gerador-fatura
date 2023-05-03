@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Button,
@@ -23,6 +23,7 @@ const GerenciarFaturas = () => {
   const [deleteModalIsOpen, setDeleteModal] = useState(false);
   const [confirmationModalIsOpen,setConfirmationModal] = useState(false);
   const [detailsModalIsOpen, setDetailsModal] = useState(false);
+  const [ data, setData] = useState({}); 
 
   const toggleModalDelete = () => setDeleteModal(!deleteModalIsOpen);
   const toggleModalConfirmation = () => setConfirmationModal(!confirmationModalIsOpen);
@@ -33,10 +34,23 @@ const GerenciarFaturas = () => {
     toggleModalConfirmation(); 
 
   };
-  const handleDownload = () => {
-    // faz alguma coisa quando o botão "Visualizar pdf é clicado" é clicado
-  };
+  // const setTable = ({id, firstname,lastname, birthday}) =>{
+  //   return {id, firstname,lastname, birthday }
+  // }
 
+  const getData = () =>{ 
+   
+      axios.get('https://fakerapi.it/api/v1/persons?_quantity=10&_birthday_start=2005-01-01&_birthday_end=2005-02-11')
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+  }
+  
+  getData();
   return (
     <main>
       <section className="d-flex align-items-center justify-content-center">
@@ -107,7 +121,6 @@ const GerenciarFaturas = () => {
       <DetailsModal
         isOpen={detailsModalIsOpen}
         toggleModalDetails={toggleModalDetails}
-        onDownload={handleDownload}
       />
       <DeleteModal
         isOpen={deleteModalIsOpen}
@@ -124,22 +137,4 @@ const GerenciarFaturas = () => {
 
 export default GerenciarFaturas;
 
-{
-  /* <Button onClick={toggleModalDelete}>lixo</Button>
-<DeleteModal
-  isOpen={deleteModalIsOpen}
-  toggleModalDelete={toggleModalDelete}
-  onDelete={handleDelete}
-/>
-<Button onClick={toggleModalConfirmation}>confirmalixo</Button>
-<ConfirmationModal
-  isOpen={confirmationModalIsOpen}
-  toggleModalConfirmation={toggleModalConfirmation}
-/>
-<Button onClick={toggleModalDetails}>detailsModal</Button>
-<DetailsModal
-  isOpen={detailsModalIsOpen}
-  toggleModalDetails={toggleModalDetails}
-  onDownload={handleDownload}
-/> */
-}
+

@@ -12,7 +12,9 @@ import {
   NavLink,
 } from "reactstrap";
 
-const DetailsModal = ({ isOpen, toggleModalDetails, onDownload }) => {
+
+
+const DetailsModal = ({ isOpen, toggleModalDetails }) => {
   return (
     <Modal isOpen={isOpen} toggle={toggleModalDetails} size="xl">
       <ModalHeader toggle={toggleModalDetails}>

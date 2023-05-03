@@ -82,7 +82,7 @@ const GerenciarFaturas = () => {
             <Table>
               <thead>
                 <tr>
-                  <th>Nome Cliente</th>
+                  <th>Nome do Cliente</th>
                   <th>Data de Nascimento</th>
                   <th></th>
                   <th></th>
@@ -93,10 +93,10 @@ const GerenciarFaturas = () => {
                   <td>Mark</td>
                   <td>31/05/2000</td>
                   <td onClick={toggleModalDetails}>
-                    <FontAwesomeIcon icon={faEye} />
+                    <FontAwesomeIcon  style={{ color: '#0d6efd', cursor: 'pointer'}} icon={faEye} />
                   </td>
                   <td  onClick={toggleModalDelete}>
-                    <FontAwesomeIcon icon={faTrashAlt} />
+                    <FontAwesomeIcon style={{ color: '#0d6efd', cursor: 'pointer'}} icon={faTrashAlt} />
                   </td>
                 </tr>
               </tbody>

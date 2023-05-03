@@ -8,12 +8,13 @@ import {
   ModalFooter,
   Row,
   Col,
-  Table
+  Table,
+  NavLink,
 } from "reactstrap";
 
 const DetailsModal = ({ isOpen, toggleModalDetails, onDownload }) => {
   return (
-    <Modal isOpen={isOpen} toggle={toggleModalDetails}  size="xl">
+    <Modal isOpen={isOpen} toggle={toggleModalDetails} size="xl">
       <ModalHeader toggle={toggleModalDetails}>
         Visualizar o Cliente
       </ModalHeader>
@@ -60,9 +61,12 @@ const DetailsModal = ({ isOpen, toggleModalDetails, onDownload }) => {
             <span>Rua blabla, 99, bairro, País</span>
           </Col>
         </Row>
-        <Row style={{ paddingTop: "0.3rem" }}> <h5>Cartões de crédito</h5></Row>
-        <Row  style={{ padding: "1rem" }}>
-          <Table bordered  style={{ padding: "1rem" }}>
+        <Row style={{ paddingTop: "0.3rem" }}>
+          {" "}
+          <h5>Cartões de crédito</h5>
+        </Row>
+        <Row style={{ padding: "1rem" }}>
+          <Table bordered style={{ padding: "1rem" }}>
             <thead>
               <tr>
                 <th>Nome no cartão</th>
@@ -95,9 +99,14 @@ const DetailsModal = ({ isOpen, toggleModalDetails, onDownload }) => {
         <Button color="secondary" onClick={toggleModalDetails}>
           Cancelar
         </Button>
-        <Button color="primary" onClick={onDownload}>
-          Visualizar PDF
-        </Button>{" "}
+
+        <NavLink
+          href="https://static.snxpay.com/pdf/Fatura%20Elevaty.pdf"
+          target="_blank"
+          style={{ textDecoration: "none" }}
+        >
+          <Button color="primary">Visualizar PDF</Button>
+        </NavLink>
       </ModalFooter>
     </Modal>
   );

@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter  } from "reactstrap";
 
 const DeleteModal = ({ isOpen, toggleModalDelete, onDelete }) => {
 

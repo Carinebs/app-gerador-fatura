@@ -32,22 +32,23 @@ const GerenciarFaturas = () => {
   const [index, setIndex] = useState(null);
   const [deleteLine, setDeleteLine] = useState([]);
   const [error, setError] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
 
   const toggleModalDelete = () => setDeleteModal(!deleteModalIsOpen);
-  const toggleModalConfirmation = () => setConfirmationModal(!confirmationModalIsOpen);
+  const toggleModalConfirmation = () =>
+    setConfirmationModal(!confirmationModalIsOpen);
   const toggleModalDetails = () => setDetailsModal(!detailsModalIsOpen);
 
- const  verifyDates = (date1, date2) => {
+  const verifyDates = (date1, date2) => {
     const dateI = new Date(date1);
     const dateF = new Date(date2);
     if (dateF < dateI) {
-       setErrorMsg('A data final deve ser maior que a data inicial!');
-       return setError(true); 
+      setErrorMsg("A data final deve ser maior que a data inicial!");
+      return setError(true);
     } else {
-      return setError(false); 
+      return setError(false);
     }
- }
+  };
 
   const handleDelete = () => {
     setDeleteLine([...deleteLine, index]);
@@ -56,7 +57,7 @@ const GerenciarFaturas = () => {
   };
 
   const updateTable = async () => {
-    verifyDates(initialBirthday, finalBirthday)
+    verifyDates(initialBirthday, finalBirthday);
     try {
       const response = await axios.get(
         `https://fakerapi.it/api/v1/persons?_quantity=8&_birthday_start=${initialBirthday}&_birthday_end=${finalBirthday}`
@@ -69,25 +70,21 @@ const GerenciarFaturas = () => {
   };
 
   useEffect(() => {
-    try {
-      async function getData() {
+    async function getData() {
+      try {
         const response = await axios.get(
           `https://fakerapi.it/api/v1/persons?_quantity=8`
         );
         setData(response.data);
+      } catch (error) {
+        console.error(error);
       }
-      getData();
-    } catch (error) {
-      console.error(error);
     }
+    getData();
   }, []);
 
-  const alert = (
-    <Alert color="danger">
-      {errorMsg}
-    </Alert>
-  );
-console.log("error", error)
+  const alert = <Alert color="danger">{errorMsg}</Alert>;
+  console.log("error", error);
   return (
     <main>
       <section className="d-flex align-items-center justify-content-center">
@@ -132,8 +129,7 @@ console.log("error", error)
             </Col>
           </Row>
           <Row>
-            <Col className={'col-12'}> {error === true ? alert : ''} </Col>
-           
+            <Col className={"col-12"}> {error === true ? alert : ""} </Col>
           </Row>
           <Row style={{ padding: "1rem" }}>
             <Table style={{ height: "300px", overflow: "auto" }}>

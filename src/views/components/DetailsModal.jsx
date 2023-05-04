@@ -27,12 +27,12 @@ const DetailsModal = ({ isOpen, toggleModalDetails, dataDetails }) => {
           `https://fakerapi.it/api/v1/credit_cards?_quantity=3`
         );
         setData(response.data);
-
-        getData();
       } catch (error) {
         console.error(error);
       }
     }
+
+    getData();
   }, []);
 
   const { id, firstname, lastname, birthday, email, phone, address } =

@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { formatDate } from "../utils/functions";
 import {
   Button,
   Container,
@@ -11,6 +12,7 @@ import {
   Input,
   Label,
   Table,
+  Alert
 } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
@@ -20,57 +22,91 @@ import ConfirmationModal from "./components/ConfirmationModal";
 import DetailsModal from "./components/DetailsModal";
 
 const GerenciarFaturas = () => {
+  const [data, setData] = useState([]);
   const [deleteModalIsOpen, setDeleteModal] = useState(false);
-  const [confirmationModalIsOpen,setConfirmationModal] = useState(false);
+  const [confirmationModalIsOpen, setConfirmationModal] = useState(false);
+  const [initialBirthday, setInitialBirthday] = useState(null);
+  const [finalBirthday, setFinalBirthday] = useState(null);
   const [detailsModalIsOpen, setDetailsModal] = useState(false);
-  const [ data, setData] = useState({}); 
+  const [dataDetails, setDataDetails] = useState(null);
+  const [index, setIndex] = useState(null);
+  const [deleteLine, setDeleteLine] = useState([]);
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const toggleModalDelete = () => setDeleteModal(!deleteModalIsOpen);
   const toggleModalConfirmation = () => setConfirmationModal(!confirmationModalIsOpen);
   const toggleModalDetails = () => setDetailsModal(!detailsModalIsOpen);
 
+ const  verifyDates = (date1, date2) => {
+    const dateI = new Date(date1);
+    const dateF = new Date(date2);
+    if (dateF < dateI) {
+       setErrorMsg('A data final deve ser maior que a data inicial!');
+       return setError(true); 
+    } else {
+      return setError(false); 
+    }
+ }
+
   const handleDelete = () => {
-    toggleModalDelete()
-    toggleModalConfirmation(); 
-
+    setDeleteLine([...deleteLine, index]);
+    toggleModalConfirmation();
+    toggleModalDelete();
   };
-  // const setTable = ({id, firstname,lastname, birthday}) =>{
-  //   return {id, firstname,lastname, birthday }
-  // }
 
-  const getData = () =>{ 
-   
-      axios.get('https://fakerapi.it/api/v1/persons?_quantity=10&_birthday_start=2005-01-01&_birthday_end=2005-02-11')
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+  const updateTable = async () => {
+    verifyDates(initialBirthday, finalBirthday)
+    try {
+      const response = await axios.get(
+        `https://fakerapi.it/api/v1/persons?_quantity=8&_birthday_start=${initialBirthday}&_birthday_end=${finalBirthday}`
+      );
+      setData(response.data);
+      setDeleteLine([]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  }
-  
-  getData();
+  useEffect(() => {
+    try {
+      async function getData() {
+        const response = await axios.get(
+          `https://fakerapi.it/api/v1/persons?_quantity=8`
+        );
+        setData(response.data);
+      }
+      getData();
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  const alert = (
+    <Alert color="danger">
+      {errorMsg}
+    </Alert>
+  );
+console.log("error", error)
   return (
     <main>
       <section className="d-flex align-items-center justify-content-center">
         <Container
-          className="bg-light border"
+          className={"bg-light border"}
           fluid="sm"
-          style={{ maxWidth: "50%", marginTop: "1rem" }}
+          style={{ maxWidth: "50%", maxHeight: "70%", marginTop: "1rem" }}
         >
           <h1 style={{ padding: "1rem" }}>Pesquisa de Clientes</h1>
           <Row
-            className="d-flex align-items-center justify-content-center"
+            className={"d-flex align-items-center justify-content-center"}
             style={{ padding: "1rem" }}
           >
             <Col>
               <FormGroup>
                 <Label for="exampleDate">Data Inicial</Label>
                 <Input
-                  id="exampleDate"
+                  onChange={(e) => setInitialBirthday(e.target.value)}
                   name="date"
-                  placeholder="date placeholder"
                   type="date"
                 />
               </FormGroup>
@@ -79,21 +115,28 @@ const GerenciarFaturas = () => {
               <FormGroup>
                 <Label for="exampleDate">Data Final</Label>
                 <Input
-                  id="exampleDate"
+                  onChange={(e) => setFinalBirthday(e.target.value)}
                   name="date"
-                  placeholder="date placeholder"
                   type="date"
                 />
               </FormGroup>
             </Col>
             <Col>
-              <Button color="primary" style={{ marginTop: "1rem" }}>
+              <Button
+                color="primary"
+                style={{ marginTop: "1rem" }}
+                onClick={() => updateTable()}
+              >
                 Pesquisar
               </Button>
             </Col>
           </Row>
+          <Row>
+            <Col className={'col-12'}> {error === true ? alert : ''} </Col>
+           
+          </Row>
           <Row style={{ padding: "1rem" }}>
-            <Table>
+            <Table style={{ height: "300px", overflow: "auto" }}>
               <thead>
                 <tr>
                   <th>Nome do Cliente</th>
@@ -103,16 +146,42 @@ const GerenciarFaturas = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Mark</td>
-                  <td>31/05/2000</td>
-                  <td onClick={toggleModalDetails}>
-                    <FontAwesomeIcon  style={{ color: '#0d6efd', cursor: 'pointer'}} icon={faEye} />
-                  </td>
-                  <td  onClick={toggleModalDelete}>
-                    <FontAwesomeIcon style={{ color: '#0d6efd', cursor: 'pointer'}} icon={faTrashAlt} />
-                  </td>
-                </tr>
+                {data &&
+                  data.data &&
+                  data.data.map((registro, index) => {
+                    const { id, firstname, lastname, birthday } = registro;
+                    return (
+                      <tr
+                        key={id}
+                        className={deleteLine.includes(index) ? "d-none" : ""}
+                      >
+                        <td>{`${firstname} ${lastname}`}</td>
+                        <td>{formatDate(birthday)}</td>
+                        <td
+                          onClick={() => {
+                            setDataDetails(data.data[index]);
+                            toggleModalDetails();
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            style={{ color: "#0d6efd", cursor: "pointer" }}
+                            icon={faEye}
+                          />
+                        </td>
+                        <td
+                          onClick={() => {
+                            toggleModalDelete();
+                            setIndex(index);
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            style={{ color: "#0d6efd", cursor: "pointer" }}
+                            icon={faTrashAlt}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </Table>
           </Row>
@@ -121,6 +190,7 @@ const GerenciarFaturas = () => {
       <DetailsModal
         isOpen={detailsModalIsOpen}
         toggleModalDetails={toggleModalDetails}
+        dataDetails={dataDetails}
       />
       <DeleteModal
         isOpen={deleteModalIsOpen}
@@ -136,5 +206,3 @@ const GerenciarFaturas = () => {
 };
 
 export default GerenciarFaturas;
-
-
